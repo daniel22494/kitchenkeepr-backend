@@ -1,10 +1,22 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+const knex = require("knex")(require("../kitchenkeepr-be/knexfile"));
 const { parse } = require("node-html-parser");
 
 const app = express();
 app.use(cors());
+
+app.get("/recipes", (_req, res) => {
+  /// get knex('recipes').then(r => res.json(r))
+  knex("recipes")
+    .then((response) => {
+      return res.status(200).json(response);
+    })
+    .catch((error) => {
+      res.status(400).send(`error retrieiving recipes ${error}`);
+    });
+});
 
 app.get("/", async (req, res) => {
   const { url } = req.query;
