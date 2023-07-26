@@ -1,20 +1,20 @@
-// const express = require("express");
-// const cors = require("cors");
+const express = require("express");
+const cors = require("cors");
 const axios = require("axios");
 const { parse } = require("node-html-parser");
 
-// const app = express();
-// app.use(cors());
+const app = express();
+app.use(cors());
 
-// app.get("/", async (req, res) => {
-//   const { url } = req.query;
-//   const caption = await getCaption(url);
-//   res.json({ caption });
-// });
+app.get("/", async (req, res) => {
+  const { url } = req.query;
+  const caption = await getCaption(url);
+  res.json({ caption });
+});
 
-// app.listen(8080, () => {
-//   console.log("ok!");
-// });
+app.listen(8080, () => {
+  console.log("ok!");
+});
 
 async function getCaption(url) {
   const { data } = await axios.get(url);
@@ -29,6 +29,6 @@ async function getCaption(url) {
 //   console.log(caption);
 // });
 
-getCaption("https://www.instagram.com/reel/CjxmT0oJkJH/").then((caption) => {
-  console.log(caption);
-});
+// getCaption("https://www.instagram.com/reel/CjxmT0oJkJH/").then((caption) => {
+//   console.log(caption);
+// });
