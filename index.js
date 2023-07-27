@@ -18,6 +18,32 @@ app.get("/recipes", (_req, res) => {
     });
 });
 
+app.get("/tags", (_req, res) => {
+  /// get knex('recipes').then(r => res.json(r))
+  knex("tags")
+    .then((response) => {
+      return res.status(200).json(response);
+    })
+    .catch((error) => {
+      res.status(400).send(`error retrieiving recipes ${error}`);
+    });
+});
+
+app.get("/taggedRecipes", (req, res) => {
+  const id = req.query.tag_id;
+  console.log(id);
+
+  knex("taggedRecipes")
+    .where("tag_id", id)
+    .join("recipes", "recipe_id", "=", "recipes.id")
+    .then((response) => {
+      return res.status(200).json(response);
+    })
+    .catch((error) => {
+      res.status(400).send(`error retrieiving recipes ${error}`);
+    });
+});
+
 app.get("/", async (req, res) => {
   const { url } = req.query;
   const caption = await getCaption(url);
