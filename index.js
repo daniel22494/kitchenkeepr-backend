@@ -8,7 +8,6 @@ const app = express();
 app.use(cors());
 
 app.get("/recipes", (_req, res) => {
-  /// get knex('recipes').then(r => res.json(r))
   knex("recipes")
     .then((response) => {
       return res.status(200).json(response);
@@ -19,7 +18,6 @@ app.get("/recipes", (_req, res) => {
 });
 
 app.get("/tags", (_req, res) => {
-  /// get knex('recipes').then(r => res.json(r))
   knex("tags")
     .then((response) => {
       return res.status(200).json(response);
@@ -62,11 +60,3 @@ async function getCaption(url) {
   const i = content.indexOf(":");
   return content.slice(i + 2);
 }
-
-// getCaption("https://www.instagram.com/p/B_UC-cQJtXG/").then((caption) => {
-//   console.log(caption);
-// });
-
-// getCaption("https://www.instagram.com/reel/CjxmT0oJkJH/").then((caption) => {
-//   console.log(caption);
-// });
