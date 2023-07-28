@@ -6,6 +6,7 @@ const { parse } = require("node-html-parser");
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 app.get("/recipes", (_req, res) => {
   knex("recipes")
@@ -29,8 +30,6 @@ app.get("/tags", (_req, res) => {
 
 app.get("/taggedRecipes", (req, res) => {
   const id = req.query.tag_id;
-  console.log(id);
-
   knex("taggedRecipes")
     .where("tag_id", id)
     .join("recipes", "recipe_id", "=", "recipes.id")
@@ -43,17 +42,47 @@ app.get("/taggedRecipes", (req, res) => {
 });
 
 app.get("/favourites", (req, res) => {
-  const id = req.query.id;
-  console.log(id);
-
   knex("favourites")
-    // .where("id", id)
+    .select("*", "favourites.id as id")
     .join("recipes", "recipe_id", "=", "recipes.id")
     .then((response) => {
       return res.status(200).json(response);
     })
     .catch((error) => {
       res.status(400).send(`error retrieiving recipes ${error}`);
+    });
+});
+
+app.post("/favourites", (req, res) => {
+  console.log(req.body);
+  knex("favourites")
+    .insert({ recipe_id: req.body.id })
+    .then((response) => {
+      return res.status(200).json(response);
+    })
+    .catch((error) => {
+      res.status(400).send(`error: ${error}`);
+    });
+});
+
+app.get("/recipes/:id", (req, res) => {
+  knex("recipes")
+    .where({ id: req.params.id })
+    .first()
+    .then((recipe) => {
+      if (!recipe) {
+        return res
+          .status(404)
+          .json({ message: `Recipe with with ID ${req.params.id} not found` });
+      }
+
+      res.status(200).json(recipe);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({
+        message: `Unable to retrieve recipe with ID ${req.params.id}`,
+      });
     });
 });
 
