@@ -42,6 +42,21 @@ app.get("/taggedRecipes", (req, res) => {
     });
 });
 
+app.get("/favourites", (req, res) => {
+  const id = req.query.id;
+  console.log(id);
+
+  knex("favourites")
+    // .where("id", id)
+    .join("recipes", "recipe_id", "=", "recipes.id")
+    .then((response) => {
+      return res.status(200).json(response);
+    })
+    .catch((error) => {
+      res.status(400).send(`error retrieiving recipes ${error}`);
+    });
+});
+
 app.get("/", async (req, res) => {
   const { url } = req.query;
   const caption = await getCaption(url);
