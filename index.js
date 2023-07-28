@@ -86,6 +86,41 @@ app.get("/recipes/:id", (req, res) => {
     });
 });
 
+// function deleteWarehouse(req, res) {
+//   knex("warehouses")
+//     .where({ id: req.params.id })
+//     .del()
+//     .then((result) => {
+// if (result === 0) {
+//   return res.status(400).json({
+//     message: `Warehouse ID: ${req.params.id} not found. Cannot be deleted`,
+//   });
+// }
+//       res.status(204).send();
+//     })
+//     .catch(() => {
+//       res.status(500).json({ message: "Unable to delete Warehouse" });
+//     });
+// }
+
+app.delete("/favourites", (req, res) => {
+  // console.log(req.body);
+  knex("favourites")
+    .where({ recipe_id: req.body.recipe_id })
+    .del()
+    .then((response) => {
+      if (response === 0) {
+        return res.status(400).json({
+          message: `Recipe ID: ${req.params.id} not found. Cannot be deleted`,
+        });
+      }
+      return res.status(200).json(response);
+    })
+    .catch(() => {
+      res.status(400).json({ message: "Unable to delete Warehouse" });
+    });
+});
+
 app.get("/", async (req, res) => {
   const { url } = req.query;
   const caption = await getCaption(url);
