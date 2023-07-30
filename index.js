@@ -3,10 +3,31 @@ const cors = require("cors");
 const axios = require("axios");
 const knex = require("knex")(require("../kitchenkeepr-be/knexfile"));
 const { parse } = require("node-html-parser");
+require("dotenv").config();
+const { Configuration, OpenAIApi } = require("openai");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const apiKey = process.env.API_KEY;
+
+const openai = new OpenAIApi(
+  new Configuration({
+    apiKey: apiKey,
+  })
+);
+
+// openai terminal prompt that works with apikey
+
+// openai
+//   .createChatCompletion({
+//     model: "gpt-3.5-turbo",
+//     messages: [{ role: "user", content: "Hello ChatGPT" }],
+//   })
+//   .then((res) => {
+//     console.log(res.data.choices[0].message.content);
+//   });
 
 app.get("/recipes", (_req, res) => {
   knex("recipes")
@@ -86,23 +107,6 @@ app.get("/recipes/:id", (req, res) => {
     });
 });
 
-// function deleteWarehouse(req, res) {
-//   knex("warehouses")
-//     .where({ id: req.params.id })
-//     .del()
-//     .then((result) => {
-// if (result === 0) {
-//   return res.status(400).json({
-//     message: `Warehouse ID: ${req.params.id} not found. Cannot be deleted`,
-//   });
-// }
-//       res.status(204).send();
-//     })
-//     .catch(() => {
-//       res.status(500).json({ message: "Unable to delete Warehouse" });
-//     });
-// }
-
 app.delete("/favourites", (req, res) => {
   // console.log(req.body);
   knex("favourites")
@@ -117,7 +121,7 @@ app.delete("/favourites", (req, res) => {
       return res.status(200).json(response);
     })
     .catch(() => {
-      res.status(400).json({ message: "Unable to delete Warehouse" });
+      res.status(400).json({ message: "Unable to delete Recipe" });
     });
 });
 
@@ -139,3 +143,65 @@ async function getCaption(url) {
   const i = content.indexOf(":");
   return content.slice(i + 2);
 }
+
+//Function that generates a prompt
+
+// async function generateIngredientReplacements(userInput) {
+//   const apiUrl = "https://api.openai.com/v1/engines/davinci-codex/completions";
+//   const prompt = `You want to replace ${userInput}. Suggest some alternative ingredients.`;
+
+//   try {
+//     const response = await axios.get(
+//       apiUrl,
+//       {
+//         prompt,
+//         max_tokens: 150,
+//         temperature: 0.7,
+//         stop: ["\n", "You want to replace"],
+//       },
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${openai.configuration.apiKey}`,
+//         },
+//       }
+//     );
+
+//     return response.data.choices[0].text.trim();
+//   } catch (error) {
+//     console.error("Error fetching data from OpenAI API:", error);
+//     return "Failed to fetch ingredient replacements.";
+//   }
+// }
+
+// a test for the function that returns an error when fetching the infomation
+
+// async function testGenerateIngredientReplacements() {
+//   try {
+//     const userInput = "sugar";
+//     const alternativeIngredients = await generateIngredientReplacements(
+//       userInput
+//     );
+//     console.log("Alternative Ingredients:", alternativeIngredients);
+//   } catch (error) {
+//     console.error("Error:", error.message);
+//   }
+// }
+
+// testGenerateIngredientReplacements();
+
+//Experimental Endpoint for OpenAI function
+
+// app.get("/api/generate-replacements/:ingredient", async (req, res) => {
+//   const { ingredient } = req.params;
+
+//   try {
+//     const replacements = await generateIngredientReplacements(ingredient);
+//     res.json({ replacements });
+//   } catch (error) {
+//     console.error("Error generating ingredient replacements:", error);
+//     res
+//       .status(500)
+//       .json({ error: "Failed to generate ingredient replacements." });
+//   }
+// });
