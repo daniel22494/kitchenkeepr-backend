@@ -144,37 +144,7 @@ async function getCaption(url) {
   return content.slice(i + 2);
 }
 
-//Function that generates a prompt
-
-// async function generateIngredientReplacements(userInput) {
-//   const apiUrl = "https://api.openai.com/v1/engines/davinci-codex/completions";
-//   const prompt = `You want to replace ${userInput}. Suggest some alternative ingredients.`;
-
-//   try {
-//     const response = await axios.get(
-//       apiUrl,
-//       {
-//         prompt,
-//         max_tokens: 150,
-//         temperature: 0.7,
-//         stop: ["\n", "You want to replace"],
-//       },
-//       {
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${openai.configuration.apiKey}`,
-//         },
-//       }
-//     );
-
-//     return response.data.choices[0].text.trim();
-//   } catch (error) {
-//     console.error("Error fetching data from OpenAI API:", error);
-//     return "Failed to fetch ingredient replacements.";
-//   }
-// }
-
-// a test for the function that returns an error when fetching the infomation
+// a test for the old function
 
 // async function testGenerateIngredientReplacements() {
 //   try {
@@ -190,14 +160,14 @@ async function getCaption(url) {
 
 // testGenerateIngredientReplacements();
 
-//Experimental Endpoint for OpenAI function
+// SANDUN'S TEST CODE
 
 // app.get("/api/generate-replacements/:ingredient", async (req, res) => {
 //   const { ingredient } = req.params;
 
 //   try {
-//     const replacements = await generateIngredientReplacements(ingredient);
-//     res.json({ replacements });
+//     testOpenAI();
+//     res.json("successful");
 //   } catch (error) {
 //     console.error("Error generating ingredient replacements:", error);
 //     res
@@ -205,3 +175,53 @@ async function getCaption(url) {
 //       .json({ error: "Failed to generate ingredient replacements." });
 //   }
 // });
+
+// function testOpenAI() {
+//   // openai terminal prompt that works with apikey
+
+//   openai
+//     .createChatCompletion({
+//       model: "gpt-3.5-turbo",
+//       messages: [{ role: "user", content: "Hello ChatGPT" }],
+//     })
+//     .then((res) => {
+//       console.log(res.data.choices[0].message.content);
+//     });
+// }
+
+// testOpenAI();
+
+//Experimental Endpoint for OpenAI function
+
+app.get("/api/generate-replacements/:ingredient", async (req, res) => {
+  const { ingredient } = req.params;
+
+  try {
+    const replacements = await generateIngredientReplacements(ingredient);
+    res.json({ replacements });
+  } catch (error) {
+    console.error("Error generating ingredient replacements:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to generate ingredient replacements." });
+  }
+});
+
+// new text daniel v1
+
+async function generateIngredientReplacements(userInput) {
+  const prompt = `You want to replace ${userInput}. Suggest some alternative ingredients.`;
+
+  try {
+    const response = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    response.data.choices[0].message.content;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// testGenerateIngredientReplacements();
