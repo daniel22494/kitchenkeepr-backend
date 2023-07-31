@@ -18,17 +18,6 @@ const openai = new OpenAIApi(
   })
 );
 
-// openai terminal prompt that works with apikey
-
-// openai
-//   .createChatCompletion({
-//     model: "gpt-3.5-turbo",
-//     messages: [{ role: "user", content: "Hello ChatGPT" }],
-//   })
-//   .then((res) => {
-//     console.log(res.data.choices[0].message.content);
-//   });
-
 app.get("/recipes", (_req, res) => {
   knex("recipes")
     .then((response) => {
@@ -108,7 +97,6 @@ app.get("/recipes/:id", (req, res) => {
 });
 
 app.delete("/favourites", (req, res) => {
-  // console.log(req.body);
   knex("favourites")
     .where({ recipe_id: req.body.recipe_id })
     .del()
@@ -144,61 +132,11 @@ async function getCaption(url) {
   return content.slice(i + 2);
 }
 
-// a test for the old function
-
-// async function testGenerateIngredientReplacements() {
-//   try {
-//     const userInput = "sugar";
-//     const alternativeIngredients = await generateIngredientReplacements(
-//       userInput
-//     );
-//     console.log("Alternative Ingredients:", alternativeIngredients);
-//   } catch (error) {
-//     console.error("Error:", error.message);
-//   }
-// }
-
-// testGenerateIngredientReplacements();
-
-// SANDUN'S TEST CODE
-
-// app.get("/api/generate-replacements/:ingredient", async (req, res) => {
-//   const { ingredient } = req.params;
-
-//   try {
-//     testOpenAI();
-//     res.json("successful");
-//   } catch (error) {
-//     console.error("Error generating ingredient replacements:", error);
-//     res
-//       .status(500)
-//       .json({ error: "Failed to generate ingredient replacements." });
-//   }
-// });
-
-// function testOpenAI() {
-//   // openai terminal prompt that works with apikey
-
-//   openai
-//     .createChatCompletion({
-//       model: "gpt-3.5-turbo",
-//       messages: [{ role: "user", content: "Hello ChatGPT" }],
-//     })
-//     .then((res) => {
-//       console.log(res.data.choices[0].message.content);
-//     });
-// }
-
-// testOpenAI();
-
-//Experimental Endpoint for OpenAI function
-
 app.get("/api/generate-replacements/:ingredient", async (req, res) => {
   const { ingredient } = req.params;
 
   try {
     const replacements = await generateIngredientReplacements(ingredient);
-    console.log(replacements);
     res.json({ replacements });
   } catch (error) {
     console.error("Error generating ingredient replacements:", error);
@@ -207,8 +145,6 @@ app.get("/api/generate-replacements/:ingredient", async (req, res) => {
       .json({ error: "Failed to generate ingredient replacements." });
   }
 });
-
-// new text daniel v1
 
 async function generateIngredientReplacements(userInput) {
   const prompt = `You want to replace ${userInput}. Suggest some alternative ingredients.`;
