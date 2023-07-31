@@ -198,6 +198,7 @@ app.get("/api/generate-replacements/:ingredient", async (req, res) => {
 
   try {
     const replacements = await generateIngredientReplacements(ingredient);
+    console.log(replacements);
     res.json({ replacements });
   } catch (error) {
     console.error("Error generating ingredient replacements:", error);
@@ -218,10 +219,8 @@ async function generateIngredientReplacements(userInput) {
       messages: [{ role: "user", content: prompt }],
     });
 
-    response.data.choices[0].message.content;
+    return response.data.choices[0].message.content;
   } catch (error) {
     console.error(error);
   }
 }
-
-// testGenerateIngredientReplacements();
