@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
-const knex = require("knex")(require("../kitchenkeepr-be/knexfile"));
+const knex = require("knex")(require("./knexfile"));
 const { parse } = require("node-html-parser");
 require("dotenv").config();
 const { Configuration, OpenAIApi } = require("openai");
@@ -86,7 +86,14 @@ app.get("/recipes/:id", (req, res) => {
           .json({ message: `Recipe with with ID ${req.params.id} not found` });
       }
 
-      res.status(200).json(recipe);
+      getCaption(recipe.link)
+        .then((caption) => {
+          recipe.caption = caption;
+          res.json(recipe);
+        })
+        .catch((error) => {
+          res.status(500).send("something went wrong with the caption");
+        });
     })
     .catch((error) => {
       console.log(error);
@@ -113,7 +120,7 @@ app.delete("/favourites", (req, res) => {
     });
 });
 
-app.get("/", async (req, res) => {
+app.get("/caption", async (req, res) => {
   const { url } = req.query;
   const caption = await getCaption(url);
   res.json({ caption });
