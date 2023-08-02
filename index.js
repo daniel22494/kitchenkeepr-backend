@@ -155,7 +155,7 @@ app.get("/caption", async (req, res) => {
   res.json({ caption });
 });
 
-app.listen(8080, () => {
+app.listen(process.env.PORT, () => {
   console.log("ok!");
 });
 
