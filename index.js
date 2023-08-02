@@ -104,6 +104,7 @@ app.get("/recipes/:id", (req, res) => {
 });
 
 app.delete("/favourites", (req, res) => {
+  console.log(req.body);
   knex("favourites")
     .where({ recipe_id: req.body.recipe_id })
     .del()
