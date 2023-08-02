@@ -63,15 +63,43 @@ app.get("/favourites", (req, res) => {
     });
 });
 
+// app.post("/favourites", (req, res) => {
+//   console.log(req.body);
+//   knex("favourites")
+//     .insert({ recipe_id: req.body.id })
+//     .then((response) => {
+//       return res.status(200).json(response);
+//     })
+//     .catch((error) => {
+//       res.status(400).send(`error: ${error}`);
+//     });
+// });
+
 app.post("/favourites", (req, res) => {
-  console.log(req.body);
+  const recipeIdToAdd = req.body.id;
+
   knex("favourites")
-    .insert({ recipe_id: req.body.id })
-    .then((response) => {
-      return res.status(200).json(response);
+    .where({ recipe_id: recipeIdToAdd })
+    .first()
+    .then((existingRecipe) => {
+      if (existingRecipe) {
+        return res
+          .status(400)
+          .json({ message: "Recipe already added to favourites" });
+      }
+      knex("favourites")
+        .insert({ recipe_id: recipeIdToAdd })
+        .then((response) => {
+          return res.status(200).json(response);
+        })
+        .catch((error) => {
+          res
+            .status(400)
+            .json({ message: "Error inserting recipe to favourites", error });
+        });
     })
     .catch((error) => {
-      res.status(400).send(`error: ${error}`);
+      res.status(400).json({ message: "Error checking favourites", error });
     });
 });
 
