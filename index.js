@@ -18,6 +18,8 @@ const openai = new OpenAIApi(
   })
 );
 
+//Retrieves All recipes
+
 app.get("/recipes", (_req, res) => {
   knex("recipes")
     .then((response) => {
@@ -28,6 +30,8 @@ app.get("/recipes", (_req, res) => {
     });
 });
 
+//Retrieves Tags/Categories
+
 app.get("/tags", (_req, res) => {
   knex("tags")
     .then((response) => {
@@ -37,6 +41,8 @@ app.get("/tags", (_req, res) => {
       res.status(400).send(`error retrieiving recipes ${error}`);
     });
 });
+
+//Retrieves categorized recipes from a joint table (recipes/tags)
 
 app.get("/taggedRecipes", (req, res) => {
   const id = req.query.tag_id;
@@ -51,6 +57,8 @@ app.get("/taggedRecipes", (req, res) => {
     });
 });
 
+//Retrieves a list of recipes in favourites folder
+
 app.get("/favourites", (req, res) => {
   knex("favourites")
     .select("*", "favourites.id as id")
@@ -63,17 +71,7 @@ app.get("/favourites", (req, res) => {
     });
 });
 
-// app.post("/favourites", (req, res) => {
-//   console.log(req.body);
-//   knex("favourites")
-//     .insert({ recipe_id: req.body.id })
-//     .then((response) => {
-//       return res.status(200).json(response);
-//     })
-//     .catch((error) => {
-//       res.status(400).send(`error: ${error}`);
-//     });
-// });
+//Posts new favourites
 
 app.post("/favourites", (req, res) => {
   const recipeIdToAdd = req.body.id;
@@ -103,6 +101,8 @@ app.post("/favourites", (req, res) => {
     });
 });
 
+//Retrieves individual recipes and their information
+
 app.get("/recipes/:id", (req, res) => {
   knex("recipes")
     .where({ id: req.params.id })
@@ -131,6 +131,8 @@ app.get("/recipes/:id", (req, res) => {
     });
 });
 
+//deletes recipes from favourites
+
 app.delete("/favourites", (req, res) => {
   console.log(req.body);
   knex("favourites")
@@ -149,14 +151,12 @@ app.delete("/favourites", (req, res) => {
     });
 });
 
+//calls function that parses URL for text (used with indiviual recipe diplay)
+
 app.get("/caption", async (req, res) => {
   const { url } = req.query;
   const caption = await getCaption(url);
   res.json({ caption });
-});
-
-app.listen(process.env.PORT, () => {
-  console.log("ok!");
 });
 
 async function getCaption(url) {
@@ -167,6 +167,8 @@ async function getCaption(url) {
   const i = content.indexOf(":");
   return content.slice(i + 2);
 }
+
+//OPENAI API call to generate ingredient
 
 app.get("/api/generate-replacements/:ingredient", async (req, res) => {
   const { ingredient } = req.params;
@@ -182,6 +184,8 @@ app.get("/api/generate-replacements/:ingredient", async (req, res) => {
   }
 });
 
+//funtion used for prompting OPENAI
+
 async function generateIngredientReplacements(userInput) {
   const prompt = `You want to replace ${userInput}. Suggest some alternative ingredients.`;
 
@@ -196,3 +200,9 @@ async function generateIngredientReplacements(userInput) {
     console.error(error);
   }
 }
+
+//PORT
+
+app.listen(process.env.PORT, () => {
+  console.log("ok!");
+});
