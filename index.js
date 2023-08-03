@@ -163,6 +163,7 @@ app.get("/caption", async (req, res) => {
 async function getCaption(url) {
   const { data } = await axios.get(url);
   const root = parse(data);
+  console.log(root);
   const desc = root.querySelector("meta[property='og:title']");
   const content = desc.getAttribute("content");
   const i = content.indexOf(":");
