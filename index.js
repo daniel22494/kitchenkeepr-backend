@@ -120,6 +120,7 @@ app.get("/recipes/:id", (req, res) => {
           res.json(recipe);
         })
         .catch((error) => {
+          console.log(error);
           res.status(500).send("something went wrong with the caption");
         });
     })
